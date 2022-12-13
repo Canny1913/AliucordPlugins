@@ -41,8 +41,8 @@ subprojects {
     // Fill out with your info
     aliucord {
             author("Canny", 858064865624457266)
-            updateUrl.set("https://raw.githubusercontent.com/USERNAME/REPONAME/builds/updater.json")
-            buildUrl.set("https://raw.githubusercontent.com/USERNAME/REPONAME/builds/%s.zip")
+            updateUrl.set("https://raw.githubusercontent.com/Canny1913/AliucordPlugins/builds/updater.json")
+            buildUrl.set("https://raw.githubusercontent.com/Canny1913/AliucordPlugins/builds/%s.zip")
     }
 
     android {
