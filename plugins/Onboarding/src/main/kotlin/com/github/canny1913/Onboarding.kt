@@ -33,6 +33,8 @@ import com.discord.api.utcdatetime.UtcDateTime
 import com.discord.app.AppActivity
 import com.discord.stores.StoreGuilds
 import com.discord.stores.StoreStream
+import com.discord.widgets.channels.list.WidgetChannelsListAdapter
+import com.discord.widgets.channels.list.`WidgetChannelsListAdapter$ItemGuildJoinRequest$onConfigure$1`
 import com.discord.widgets.chat.input.ChatInputViewModel
 import com.discord.widgets.chat.input.WidgetChatInput
 import com.discord.widgets.chat.input.`WidgetChatInput$configureChatGuard$6`
@@ -132,6 +134,13 @@ class Onboarding : Plugin() {
             if (param.args[5] as Boolean) {
                 if (maybeOpenOnboarding(pluginContext!!, param.args[0] as Long)) param.result = null
             }
+        }
+        patcher.before<`WidgetChannelsListAdapter$ItemGuildJoinRequest$onConfigure$1`>(
+            "onClick",
+            View::class.java
+        ) { (param) ->
+            val guildId = WidgetChannelsListAdapter.ItemGuildJoinRequest.`access$getAdapter$p`(this.`this$0`).selectedGuildId
+            if (maybeOpenOnboarding(pluginContext!!, guildId)) param.result = null
         }
     }
     fun patchModels() {
