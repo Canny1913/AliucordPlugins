@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--suppress AndroidDomInspection -->
+<com.discord.utilities.view.rounded.RoundedRelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res/com.discord"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:ignore="ResAuto, InvalidId"
+    android:id="@+id/onboarding_term_root"
+    android:background="?app:attr/colorBackgroundSecondary"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginLeft="16dp"
+    android:layout_marginRight="16dp">
+    <LinearLayout
+        android:id="@+id/onboarding_term_container"
+        android:padding="12dp"
+        style="@app:style/UiKit.ViewGroup.LinearLayout.Horizontal">
+        <TextView
+            android:textSize="@app:dimen/uikit_textsize_large"
+            android:id="@+id/onboarding_term_index"
+            style="@app:style/GuildProfileSheet.DiscoverableGuild.Text"/>
+        <com.discord.utilities.view.text.SimpleDraweeSpanTextView
+            android:textColor="?app:attr/colorTextNormal"
+            android:id="@+id/onboarding_term_description"
+            android:paddingLeft="8dp"
+            android:paddingRight="8dp"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            style="@app:style/UiKit.TextView.Large"/>
+    </LinearLayout>
+    <View
+        android:id="@+id/onboarding_term_divider"
+        android:layout_marginLeft="12dp"
+        android:layout_marginRight="12dp"
+        android:layout_alignBottom="@+id/onboarding_term_container"
+        style="@app:style/UiKit.Settings.Divider"/>
+</com.discord.utilities.view.rounded.RoundedRelativeLayout>

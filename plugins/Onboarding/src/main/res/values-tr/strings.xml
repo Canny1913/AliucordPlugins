@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="question_index">Soru \(%1$d\/%2$d\)</string>
+    <string name="required">Gerekli</string>
+    <string name="weird_symbol">•</string>
+    <string name="onboarding_load_fail">Sunucuya alım sayfası açılamadı..</string>
+    <string name="next">Sonraki</string>
+    <string name="finish">Bitir</string>
+    <string name="term_header_title">Az kaldı…</string>
+    <string name="term_header_description">Sunucu kurallarını oku &amp; kabul et</string>
+    <string name="term_index">%1$d.</string>
+    <string name="one_role">%1$s rolünü alacaksın.</string>
+    <string name="two_role">%1$s ve %2$s rollerini alacaksın.</string>
+    <string name="three_role">%1$s, %2$s rollerini ve %3$d tane daha rol alacaksın.</string>
+    <string name="more_role">%1$s, %2$s rollerini ve %3$d tane daha rol alacaksın..</string>
+</resources>

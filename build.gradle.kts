@@ -6,7 +6,7 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.dsl.KotlinAndroidExtension
 
 plugins {
-    alias(libs.plugins.aliucord)
+    alias(libs.plugins.aliucord.plugin)
     alias(libs.plugins.android.library) apply false
     alias(libs.plugins.kotlin.android) apply false
 }
@@ -18,7 +18,7 @@ subprojects {
 
     val libs = rootProject.libs
 
-    pluginManager.apply(libs.plugins.aliucord.get().pluginId)
+    pluginManager.apply(libs.plugins.aliucord.plugin.get().pluginId)
     pluginManager.apply(libs.plugins.android.library.get().pluginId)
     pluginManager.apply(libs.plugins.kotlin.android.get().pluginId)
 

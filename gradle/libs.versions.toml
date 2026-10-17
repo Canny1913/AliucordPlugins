@@ -1,6 +1,6 @@
 [versions]
-aliucord = "2.7.1"
-aliucord-plugin = "2.3.0"
+aliucord = "2.11.0"
+aliucore-gradle = "e323d8c"
 discord = "126021"
 android = "8.13.2"
 kotlin = "2.3.20"
@@ -11,6 +11,6 @@ discord = { module = "com.discord:discord", version.ref = "discord" }
 kotlin-stdlib = { module = "org.jetbrains.kotlin:kotlin-stdlib", version.ref = "kotlin" }
 
 [plugins]
-aliucord = { id = "com.aliucord.plugin", version.ref = "aliucord-plugin" }
+aliucord-plugin = { id = "io.github.canny1913.plugin", version.ref = "aliucore-gradle" }
 android-library = { id = "com.android.library", version.ref = "android" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }

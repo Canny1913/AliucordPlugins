@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--suppress AndroidDomInspection -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res/com.discord"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:ignore="ResAuto, InvalidId"
+    android:shape="rectangle">
+    <stroke
+        android:width="4dp"
+        android:color="@app:color/uikit_btn_bg_color_selector_brand" />
+    <solid android:color="@android:color/transparent" />
+    <corners android:radius="8dp" />
+</shape>

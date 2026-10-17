@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--suppress AndroidDomInspection -->
+<shape android:shape="rectangle"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res/com.discord"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:ignore="ResAuto">
+    <gradient
+        android:endColor="#00000000"
+        android:centerColor="?app:attr/colorBackgroundPrimary"
+        android:startColor="?app:attr/colorBackgroundPrimary"
+        android:type="linear"
+        android:centerY="0.5"
+        android:angle="90" />
+</shape>

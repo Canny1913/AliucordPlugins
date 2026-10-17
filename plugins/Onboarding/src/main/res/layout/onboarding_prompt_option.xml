@@ -1,0 +1,83 @@
+<!--suppress AndroidDomInspection -->
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res/com.discord"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:ignore="ResAuto, InvalidId"
+    android:id="@+id/onboarding_prompt_option"
+    android:layout_marginLeft="12dp"
+    android:layout_marginRight="12dp"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/prompt_option_background"
+    style="@app:style/UiKit.ImageView.Clickable">
+
+    <View
+        android:id="@+id/prompt_option_clicked"
+        android:background="@drawable/prompt_option_clicked_bg"
+        android:visibility="visible"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"/>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="6dp"
+        android:paddingLeft="@dimen/prompt_horizontal_inset"
+        android:paddingRight="@dimen/prompt_horizontal_inset"
+        android:paddingTop="@dimen/prompt_vertical_inset"
+        android:paddingBottom="@dimen/prompt_vertical_inset"
+        android:orientation="horizontal"
+        style="@app:style/UiKit.ViewGroup.LinearLayout"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <com.facebook.drawee.view.SimpleDraweeView
+            android:id="@+id/onboarding_prompt_option_icon"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_margin="6dp"
+            android:layout_gravity="center_vertical"
+            app:actualImageScaleType="fitCenter"
+            app:roundedCornerRadius="16dp"
+            app:placeholderImage="@app:drawable/drawable_squircle_brand_500" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:orientation="vertical"
+            style="@app:style/UiKit.ViewGroup.LinearLayout">
+
+            <TextView
+                android:id="@+id/onboarding_prompt_option_title"
+                android:textColor="?app:attr/colorHeaderPrimary"
+                android:textAlignment="viewStart"
+                android:layout_marginLeft="4dp"
+                android:layout_marginRight="4dp"
+                android:layout_marginBottom="2dp"
+                android:layout_marginTop="2dp"
+                android:fontFamily="?app:attr/font_primary_semibold"
+                android:textSize="@app:dimen/uikit_textsize_large"
+                style="@app:style/FriendsList.EmptyState.Subtitle"/>
+
+            <TextView
+                android:id="@+id/onboarding_prompt_option_description"
+                android:textColor="@app:color/primary_dark_345"
+                android:textAlignment="viewStart"
+                android:layout_marginLeft="4dp"
+                android:layout_marginRight="4dp"
+                android:layout_marginBottom="2dp"
+                android:textSize="@app:dimen/uikit_textsize_small"
+                style="@app:style/UiKit.TextView"/>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

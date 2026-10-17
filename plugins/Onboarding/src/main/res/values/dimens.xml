@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="prompt_horizontal_inset">4dp</dimen>
+    <dimen name="prompt_vertical_inset">4dp</dimen>
+</resources>

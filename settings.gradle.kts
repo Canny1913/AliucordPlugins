@@ -1,16 +1,33 @@
+@file:Suppress("UnstableApiUsage")
+
 pluginManagement {
     repositories {
         google()
         gradlePluginPortal()
-        maven("https://maven.aliucord.com/releases")
+        maven {
+            name = "aliucord"
+            url = uri("https://maven.aliucord.com/releases")
+        }
+        maven {
+            name = "aliucord"
+            url = uri("https://maven.aliucord.com/snapshots")
+        }
     }
 }
 
 dependencyResolutionManagement {
+    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
     repositories {
+        maven {
+            name = "aliucord"
+            url = uri("https://maven.aliucord.com/snapshots")
+        }
         google()
         mavenCentral()
-        maven("https://maven.aliucord.com/releases")
+        maven {
+            name = "aliucord"
+            url = uri("https://maven.aliucord.com/releases")
+        }
     }
 }
 

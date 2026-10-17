@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--suppress AndroidDomInspection -->
+<inset
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res/com.discord"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:insetLeft="@dimen/prompt_horizontal_inset"
+    android:insetRight="@dimen/prompt_horizontal_inset"
+    android:insetTop="@dimen/prompt_vertical_inset"
+    android:insetBottom="@dimen/prompt_vertical_inset"
+    tools:ignore="ResAuto">
+    <shape android:shape="rectangle">
+        <corners android:radius="8dp"/>
+        <solid android:color="?app:attr/colorBackgroundSecondary"/>
+
+    </shape>
+</inset>

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="question_index">Question %1$d of %2$d</string>
+    <string name="required">Required</string>
+    <string name="weird_symbol">•</string>
+    <string name="onboarding_load_fail">Failed to load onboarding.</string>
+    <string name="next">Next</string>
+    <string name="finish">Finish</string>
+    <string name="term_header_title">Almost there…</string>
+    <string name="term_header_description">Read &amp; Agree to Server Rules</string>
+    <string name="term_index">%1$d.</string>
+    <string name="one_role">You will receive the %1$s role.</string>
+    <string name="two_role">You will receive the %1$s and %2$s roles.</string>
+    <string name="three_role">You will receive the %1$s, %2$s roles and %3$d other role.</string>
+    <string name="more_role">You will receive the %1$s, %2$s roles and %3$d other roles.</string>
+</resources>

@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--suppress AndroidDomInspection -->
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res/com.discord"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:background="?app:attr/colorBackgroundPrimary"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:animateLayoutChanges="false"
+    tools:ignore="ResAuto, InvalidId"
+    style="@app:style/UiKit.ViewGroup.CoordinatorLayout">
+
+    <com.discord.views.CustomAppBarLayout
+        android:id="@+id/app_bar_layout"
+        android:background="?app:attr/colorBackgroundPrimary"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        style="@app:style/AppTheme.AppBarLayout">
+        <com.google.android.material.appbar.CollapsingToolbarLayout
+            android:id="@+id/collapsing_toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:contentScrim="?app:attr/colorBackgroundPrimary"
+            style="@app:style/AppTheme.CollapsingToolbarLayout"
+            app:layout_scrollFlags="exitUntilCollapsed|scroll">
+            <androidx.appcompat.widget.Toolbar
+                android:id="@+id/action_bar_toolbar"
+                android:background="?app:attr/colorBackgroundPrimary"
+                app:navigationContentDescription="@app:string/back"
+                app:navigationIcon="?app:attr/ic_action_bar_back"
+                style="@app:style/AppTheme.Toolbar"/>
+        </com.google.android.material.appbar.CollapsingToolbarLayout>
+
+        <ProgressBar
+            android:id="@+id/progress_bar"
+            android:layout_width="match_parent"
+            android:layout_height="4dp"
+            android:progressTint="@app:color/uikit_btn_bg_color_selector_brand"
+            android:max="10000"
+            android:indeterminate="false"
+            app:layout_constraintRight_toRightOf="parent"
+            style="?android:attr/progressBarStyleHorizontal"
+            />
+    </com.discord.views.CustomAppBarLayout>
+
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/onboarding_scrollview"
+        android:fitsSystemWindows="false"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toTopOf="@+id/onboarding_role_text"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/app_bar_layout"
+        style="@app:style/UiKit.ViewGroup.NestedScrollView.AppBarScrollingViewBehavior">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/onboarding_recycler"
+            style="@app:style/UiKit.ViewGroup.RecyclerView"/>
+    </androidx.core.widget.NestedScrollView>
+
+
+    <View
+        android:id="@+id/onboarding_next_gradient"
+        android:layout_width="match_parent"
+        android:layout_height="16dp"
+        android:background="@drawable/next_button_background"
+        app:layout_constraintBottom_toTopOf="@+id/onboarding_role_text"
+        />
+    <TextView
+        android:layout_width="match_parent"
+        android:id="@+id/onboarding_role_text"
+        android:textColor="?app:attr/colorHeaderPrimary"
+        android:textAlignment="center"
+        android:paddingLeft="12dp"
+        android:paddingRight="12dp"
+        android:visibility="gone"
+        android:textSize="@app:dimen/uikit_textsize_small"
+        app:layout_constraintBottom_toTopOf="@+id/onboarding_next_layout"
+        app:layout_constraintRight_toRightOf="parent"
+        style="@app:style/UiKit.TextView"/>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:id="@+id/onboarding_next_layout"
+        android:background="?app:attr/colorBackgroundPrimary"
+        android:orientation="vertical"
+        android:gravity="center"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        style="@app:style/UiKit.ViewGroup.LinearLayout">
+
+        <com.discord.views.LoadingButton
+            android:id="@+id/onboarding_next"
+            android:paddingLeft="0dp"
+            android:paddingRight="0dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+            app:lb_text="@string/next"
+            app:lb_progress_color="@app:color/white"
+            style="@app:style/UiKit.Material.Button"/>
+
+    </LinearLayout>
+
+    <com.discord.utilities.dimmer.DimmerView
+        app:layout_constraintBottom_toTopOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        android:id="@+id/dimmer_view"
+        style="@app:style/UiKit.DimmerView"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
