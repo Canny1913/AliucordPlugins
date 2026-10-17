@@ -97,7 +97,6 @@ interface PluginRestAPIInterface {
     fun createOnboardingResponses(@Path("guildId") guildId: Long, @Body response: OnboardingResponseRequest): Observable<Void>
     @GET("guilds/{guildId}/member-verification")
     fun getGuildMemberVerification(@Path("guildId") guildId: Long, @Query("with_guild") withGuild: Boolean): Observable<ModelMemberVerificationForm>
-
     @PUT("guilds/{guildId}/requests/@me")
     fun createGuildJoinRequest(@Path("guildId") guildId: Long, @Body form: RestAPIParams.MemberVerificationForm): Observable<ModelMemberVerificationFormResponse>
 }

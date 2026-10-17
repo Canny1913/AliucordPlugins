@@ -215,7 +215,9 @@ class OnboardingViewModel(
 
 
     private fun handleStoreState(state: StoreState) {
-        if (state is StoreState.Loaded && getViewState() is ViewState.Loading) {
+        if (state is StoreState.Loaded) {
+            if (getViewState() is ViewState.Loaded) return
+
             val onboardingPrompts = state.onboardingResponse.prompts.filter(OnboardingPrompt::inOnboarding)
             if (onboardingPrompts.isEmpty()) return
             updateViewState(
