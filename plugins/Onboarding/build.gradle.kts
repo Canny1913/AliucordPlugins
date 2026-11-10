@@ -11,5 +11,4 @@ aliucord {
         * Initial plugin release.
         """.trimIndent()
     )
-    deploy.set(false)
 }
