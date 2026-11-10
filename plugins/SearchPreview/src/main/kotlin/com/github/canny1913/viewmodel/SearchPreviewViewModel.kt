@@ -9,6 +9,7 @@ import com.aliucord.utils.RxUtils.map
 import com.aliucord.utils.RxUtils.subscribe
 import com.aliucord.wrappers.ChannelWrapper.Companion.guildId
 import com.aliucord.wrappers.ChannelWrapper.Companion.id
+import com.discord.api.channel.Channel
 import com.discord.app.AppComponent
 import com.discord.models.message.Message
 import com.discord.stores.StoreMessagesLoader
@@ -56,7 +57,7 @@ class SearchPreviewViewModel(
             // else normal chat views will also get affected by message loader
             val model = WidgetChatListModel(
                 state.userId,
-                state.channelId,
+                state.channel.id,
                 null,
                 0,
                 emptyMap(),
@@ -73,7 +74,7 @@ class SearchPreviewViewModel(
             }
             updateViewState(
                 ViewState.Loaded(
-                    model
+                    model, state.channel
                 )
             )
         } else {
@@ -86,7 +87,7 @@ class SearchPreviewViewModel(
         class Loading : ViewState
         class Exit : ViewState
         class Loaded(
-            val model: WidgetChatListModel,
+            val model: WidgetChatListModel, val channel: Channel
         ) : ViewState
     }
 
@@ -95,7 +96,7 @@ class SearchPreviewViewModel(
             val messages: List<ChatListEntry>,
             val userId: Long,
             val roles: Set<Long>,
-            val channelId: Long
+            val channel: Channel
         ) : StoreState
     }
 
@@ -162,7 +163,7 @@ class SearchPreviewViewModel(
                 false
             )
             return@combineLatest StoreState.Loaded(
-                model.items, me, guildMembers[me]?.roles?.toSet() ?: emptySet(), channel.id
+                model.items, me, guildMembers[me]?.roles?.toSet() ?: emptySet(), channel
             )
 
         }

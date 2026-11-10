@@ -25,6 +25,7 @@
             <androidx.appcompat.widget.Toolbar
                 android:id="@+id/action_bar_toolbar"
                 android:background="?app:attr/colorBackgroundPrimary"
+                app:contentInsetStartWithNavigation="0dp"
                 app:navigationContentDescription="@app:string/back"
                 app:navigationIcon="?app:attr/ic_action_bar_back"
                 style="@app:style/AppTheme.Toolbar"/>

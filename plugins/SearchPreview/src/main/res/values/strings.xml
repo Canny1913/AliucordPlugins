@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="back">Back</string>
     <string name="next">Jump to message</string>
     <string name="load_fail">Failed to load search preview.</string>
 </resources>

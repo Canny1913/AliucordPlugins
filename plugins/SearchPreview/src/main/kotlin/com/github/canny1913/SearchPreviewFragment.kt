@@ -10,6 +10,8 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.RecyclerView
+import com.aliucord.Utils
+import com.aliucord.utils.ChannelUtils
 import com.discord.api.activity.Activity
 import com.discord.api.application.Application
 import com.discord.api.channel.Channel
@@ -39,6 +41,8 @@ import java.util.concurrent.atomic.AtomicBoolean
 class SearchPreviewFragment(
     val ctx: Context, val channelId: Long, val messageId: Long
 ) : AppFragment(R.layout.widget_search_preview) {
+    // todo: investigate com.discord.R
+    val searchToolbarIcon = Utils.getResId("ic_search_grey_24dp", "drawable")
 
     lateinit var searchAdapter: WidgetChatListAdapter
     val viewModel: SearchPreviewViewModel by activityViewModels {
@@ -73,6 +77,9 @@ class SearchPreviewFragment(
     override fun onViewBound(view: View?) {
         super.onViewBound(view)
 
+        // bind toolbar
+        appActivity.n(binding.toolbarView)
+
         val recyclerView = binding.recyclerView
 
         searchAdapter = MGRecyclerAdapter.configure(
@@ -103,6 +110,8 @@ class SearchPreviewFragment(
             binding.dimmerView.setDimmed(true, true)
         }
         if (viewState is SearchPreviewViewModel.ViewState.Loaded) {
+            val channelName = ChannelUtils.getDisplayNameOrDefault(viewState.channel, context, false)
+            setActionBarTitle(channelName, searchToolbarIcon, null)
             binding.jumpButtonView.apply {
                 this.setIsLoading(false)
                 visibility = View.VISIBLE
