@@ -72,7 +72,7 @@ class SearchPreview : Plugin() {
         ) {
             // todo: bad fix
             // without this, pressing replies on previews will affect chat as well
-            if (adapter.data.guildId == 0L) {
+            if (adapter.data.oldestMessageId == -1L) {
                 val reply = itemView.findViewById<View?>("chat_list_adapter_item_text_decorator")
                 reply?.let {
                     it.isClickable = false

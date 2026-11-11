@@ -61,7 +61,7 @@ class SearchPreviewViewModel(
                 null,
                 0,
                 emptyMap(),
-                0,
+                -1,
                 state.messages,
                 state.roles,
                 0,
