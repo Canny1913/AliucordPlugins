@@ -1,9 +1,11 @@
-version = "1.0.1"
+version = "1.0.2"
 description = "Backports search preview feature from DiscordRN."
 
 aliucord {
     changelog.set(
         """
+        # 1.0.2
+        * Added bandaid fix for falsely blocked reply jumps
         # 1.0.1
         * Added channel title in top toolbar.
         # 1.0.0
