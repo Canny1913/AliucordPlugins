@@ -34,6 +34,7 @@ class SearchPreview : Plugin() {
         patchMisc()
     }
     fun patchFragmentProxy() {
+        // todo: despicable
         if (PluginManager.plugins["Onboarding"]?.manifest?.authors?.any { it?.name == "canny1913" } == true) return
 
         patcher.after<FragmentProxy>("onCreateView", LayoutInflater::class.java, ViewGroup::class.java, Bundle::class.java) {

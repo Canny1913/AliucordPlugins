@@ -8,31 +8,17 @@ import android.content.res.Resources
 import android.view.ContextThemeWrapper
 import android.view.LayoutInflater
 import androidx.annotation.StyleRes
+import com.aliucord.Constants
 import com.aliucord.entities.Plugin
 import java.lang.reflect.Field
 import java.lang.reflect.Method
-import java.lang.reflect.Array as ReflectArray
 
-class PluginContext(ctx: Context, @StyleRes themeId: Int, val plugin: Plugin) : ContextThemeWrapper(ctx, themeId) {
+class PluginContext(val ctx: Context, @StyleRes themeId: Int, val plugin: Plugin) : ContextThemeWrapper(ctx, themeId) {
     private var mergedResources: Resources? = null
 
     init {
-        if (plugin.resources != null) {
+        if (plugin.resources != null) construct()
 
-            val resources: Resources = this.plugin.resources!!
-            val pluginAssets = apkAssetsGetter.invoke(resources.assets) as Array<*>
-            val appAssets = apkAssetsGetter.invoke(ctx.resources.assets) as Array<*>
-            val newAssets: List<*> = listOf(*pluginAssets, *appAssets)
-            val newAssetManager = AssetManager::class.java.getDeclaredConstructor().newInstance()
-            val newAssetsArray = ReflectArray.newInstance(apkAssetsClass, newAssets.size)
-            for (i in 0..newAssets.size - 1) {
-                ReflectArray.set(newAssetsArray, i, newAssets[i])
-            }
-            apkAssetsSetter(newAssetManager, newAssetsArray, true)
-
-            @Suppress("DEPRECATION")
-            this.mergedResources = Resources(newAssetManager, ctx.resources.displayMetrics, ctx.resources.configuration)
-        }
     }
 
 
@@ -55,16 +41,32 @@ class PluginContext(ctx: Context, @StyleRes themeId: Int, val plugin: Plugin) : 
         }
         return super.getSystemService(name)
     }
-}
 
-@SuppressLint("PrivateApi")
-val apkAssetsClass: Class<*> = Class.forName("android.content.res.ApkAssets")
-val apkAssetsGetter: Method = AssetManager::class.java.getMethod("getApkAssets").apply { isAccessible = true }
-val apkAssetsSetter: Method =
-    AssetManager::class.java.getMethod("setApkAssets",
-        ReflectArray.newInstance(apkAssetsClass, 0)::class.java,
-        Boolean::class.java)
-        .apply { isAccessible = true }
+    fun construct() {
+        val assetManager = AssetManager::class.java.getDeclaredConstructor().newInstance()
+        val assetPathAddMethod: Method = AssetManager::class.java.getMethod("addAssetPath", String::class.java).apply { isAccessible = true }
+
+        // Host application APK
+        assetPathAddMethod.invoke(
+            assetManager,
+            ctx.applicationInfo.sourceDir
+        )
+
+        // Host application split APKs, if applicable
+        ctx.applicationInfo.splitSourceDirs?.forEach {
+            assetPathAddMethod.invoke(assetManager, it)
+        }
+
+        // Plugin APK
+        assetPathAddMethod.invoke(
+            assetManager,
+            Constants.PLUGINS_PATH + "/" + plugin.__filename + ".zip"
+        )
+
+        @Suppress("DEPRECATION")
+        this.mergedResources = Resources(assetManager, ctx.resources.displayMetrics, ctx.resources.configuration)
+    }
+}
 
 @SuppressLint("PrivateApi")
 val themeResField: Field = ContextThemeWrapper::class.java.getDeclaredField("mThemeResource").apply { isAccessible = true }
