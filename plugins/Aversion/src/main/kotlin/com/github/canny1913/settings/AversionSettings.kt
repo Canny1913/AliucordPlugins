@@ -15,12 +15,12 @@ class AversionSettings: SettingsPage() {
         setActionBarTitle("Aversion Settings")
         createSetting(
             "Hide Blocked Messages",
-            "Hide blocked messages in chat and enable chat indicator",
+            "Hide blocked messages in chat",
             hideBlockedMessagesDelegate
         ).apply(::addView)
         createSetting(
             "Hide Ignored Messages",
-            "Hide ignored messages in chat and enable chat indicator",
+            "Hide ignored messages in chat",
             hideIgnoredMessagesDelegate
         ).apply(::addView)
         createSetting(
