@@ -1,0 +1,17 @@
+<!--suppress AndroidDomInspection -->
+<androidx.appcompat.widget.AppCompatImageView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res/com.discord"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:ignore="ResAuto, InvalidId"
+    android:id="@+id/channel_list_clear_all_ghost"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:paddingEnd="11dp"
+    android:paddingTop="9dp"
+    android:paddingStart="11dp"
+    android:paddingBottom="8dp"
+    android:src="@drawable/ghost_x"
+    app:layout_constraintEnd_toStartOf="@app:id/channels_list_start_group"
+    app:layout_constraintTop_toTopOf="parent"
+    app:layout_constraintBottom_toBottomOf="@app:id/channels_list_start_group" />

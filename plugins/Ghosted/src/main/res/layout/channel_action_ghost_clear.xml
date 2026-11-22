@@ -1,0 +1,14 @@
+<!--suppress AndroidDomInspection -->
+<TextView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res/com.discord"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:ignore="ResAuto, InvalidId"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:text="@string/clear_ghost"
+    android:drawableStart="@drawable/ghost_x"
+    android:paddingStart="18.5dp"
+    android:paddingEnd="10dp"
+    android:gravity="center_vertical"
+    style="@app:style/UiKit.Settings.Item.Icon"/>

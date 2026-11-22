@@ -16,17 +16,7 @@ import com.discord.utilities.dimen.DimenUtils
 import com.discord.views.CheckedSetting
 import com.lytefast.flexinput.R
 
-class GhostedSettings(
-    settingsAPI: SettingsAPI
-): SettingsPage() {
-    private val ghostedTimeIndexDelegate = settingsAPI.delegate("ghostedTime", GhostedTime.None.ordinal)
-    var ghostedTimeIndex by ghostedTimeIndexDelegate
-    val ghostedTime
-        get() = GhostedTime.entries[ghostedTimeIndex]
-    private val ignoreGroupDmsDelegate = settingsAPI.delegate("ignoreGroupDms", false)
-    private val ignoreMutedDmsDelegate = settingsAPI.delegate("ignoreMutedDms", false)
-    private val ignoreBotsDelegate = settingsAPI.delegate("ignoreBots", false)
-
+class GhostedSettings: SettingsPage() {
     override fun onViewBound(view: View?) {
         super.onViewBound(view)
         val ctx = requireContext()
@@ -107,6 +97,31 @@ class GhostedSettings(
                 setting = !setting
             }
         }
+    }
+    companion object {
+        private val settings = SettingsAPI("Ghosted")
+        // Aliucord settings implementation is horrible so this contains a lot of hacky fixes
+        private val ghostedTimeIndexDelegate = settings.delegate("ghostedTime", GhostedTime.None.ordinal)
+        var ghostedTimeIndex by ghostedTimeIndexDelegate
+        val ghostedTime
+            get() = GhostedTime.entries[ghostedTimeIndex]
+
+        private val ignoreGroupDmsDelegate = settings.delegate("ignoreGroupDms", false)
+        val ignoreGroupDms by ignoreGroupDmsDelegate
+
+        private val ignoreMutedDmsDelegate = settings.delegate("ignoreMutedDms", false)
+        val ignoreMutedDms by ignoreGroupDmsDelegate
+
+        private val ignoreBotsDelegate = settings.delegate("ignoreBots", false)
+        val ignoreBots by ignoreBotsDelegate
+
+        var clearedIds by settings.delegate("clearMarkerIds", mutableMapOf<String, String>())
+        var clearMarkerTimestamps: MutableMap<Long, Long> =
+            clearedIds.map { it.key.toLong() to it.value.toLong() }.toMap().toMutableMap()
+            set(value) {
+                clearedIds = value.map { it.key.toString() to it.value.toString() }.toMap().toMutableMap()
+                field = value
+            }
     }
 }
 
