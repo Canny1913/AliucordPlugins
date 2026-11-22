@@ -507,10 +507,7 @@ class Aversion : Plugin() {
                 adapterMessage = originalEntry.message,
                 isHidden = hideBlockedEntries
             )
-            val isFirstEntryBlocked = if (groupIndex == 0) items.subList(0, entryIndex).all {
-                it.authorId in blockedUsersMap
-            } else false
-            if (originalEntry.isInExpandedBlockedMessageChunk && !isFirstEntryBlocked) {
+            if (originalEntry.isInExpandedBlockedMessageChunk) {
                 val lastMessageId = messages.minOf { it.id }
                 val newIndex = items.indexOfLast {
                     it.messageId == lastMessageId
