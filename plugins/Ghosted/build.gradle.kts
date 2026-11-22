@@ -1,9 +1,12 @@
-version = "0.0.2"
+version = "0.0.3"
 description = "Displays a ghost icon upon ghosting DMs"
 
 aliucord {
     changelog.set(
         """
+        # 0.0.3
+        * Pretty much rewrite half of plugin.
+        
         # 0.0.2
         * Fix crash due to bad build config.
         
@@ -11,5 +14,4 @@ aliucord {
         * Initial plugin release.
         """.trimIndent()
     )
-    deploy.set(true)
 }
