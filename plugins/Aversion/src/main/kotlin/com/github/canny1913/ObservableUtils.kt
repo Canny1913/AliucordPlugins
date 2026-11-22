@@ -25,7 +25,7 @@ object ObservableUtils {
             onError(it)
         }, onCompleted
     ).apply { subscribe(this) }
-    fun <T, R> Observable<T>.flatMap(map: (T) -> Observable<out R>) = A(map)!!
+    fun <T> Observable<T>.ui() = ObservableExtensionsKt.ui(this)!!
     fun <T, R> Observable<T>.switch(map: (T) -> Observable<out R>) = Y(map)!!
     fun <T1, T2, R> combineLatest(first: Observable<out T1>, second: Observable<out T2>, func: (T1, T2) -> R) = Observable.j(first, second, func)!!
 

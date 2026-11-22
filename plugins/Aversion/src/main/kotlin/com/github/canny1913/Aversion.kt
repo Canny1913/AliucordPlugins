@@ -45,7 +45,6 @@ import com.aliucord.patcher.component4
 import com.aliucord.patcher.component5
 import com.aliucord.utils.ChannelUtils
 import com.aliucord.utils.RxUtils.map
-import com.aliucord.utils.RxUtils.ui
 import com.aliucord.utils.ViewUtils.addTo
 import com.aliucord.utils.ViewUtils.findViewById
 import com.aliucord.utils.accessField
@@ -88,6 +87,7 @@ import com.discord.widgets.friends.WidgetFriendsListAdapter
 import com.discord.widgets.home.WidgetHome
 import com.discord.widgets.settings.account.WidgetSettingsAccount
 import com.github.canny1913.ObservableUtils.loggerSubscribe
+import com.github.canny1913.ObservableUtils.ui
 import com.github.canny1913.ObservableUtils.withComputation
 import com.github.canny1913.entries.AversionBlockedEntry
 import com.github.canny1913.entries.AversionIgnoredEntry
