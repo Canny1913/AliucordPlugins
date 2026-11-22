@@ -1,0 +1,15 @@
+<!--suppress AndroidDomInspection -->
+<ImageView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res/com.discord"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:contentDescription="@string/channel_list_indicator_description"
+    tools:ignore="ResAuto, InvalidId"
+    android:id="@+id/aversion_channel_indicator"
+    android:visibility="gone"
+    android:layout_width="16dp"
+    android:layout_height="16dp"
+    android:layout_centerVertical="true"
+    android:minWidth="16dp"
+    android:layout_marginEnd="16dp"
+    android:layout_alignParentEnd="true"/>

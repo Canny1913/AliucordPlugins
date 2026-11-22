@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--suppress AndroidDomInspection -->
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res/com.discord"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:ignore="ResAuto, InvalidId"
+    android:id="@+id/ignored_user_item"
+    style="@app:style/BlockedUsersList.Item">
+    <com.facebook.drawee.view.SimpleDraweeView
+        android:id="@+id/ignored_user_item_avatar"
+        android:layout_centerVertical="true"
+        style="@app:style/BlockedUsersList.Item.Avatar"/>
+    <TextView
+        android:id="@+id/ignored_user_item_name"
+        android:text="@app:string/sample_user_name"
+        android:layout_centerVertical="true"
+        android:layout_toStartOf="@+id/ignored_user_button"
+        android:layout_toEndOf="@+id/ignored_user_item_avatar"
+        style="@app:style/BlockedUsersList.Item.Name"/>
+    <com.google.android.material.button.MaterialButton
+        android:textSize="@app:dimen/uikit_textsize_medium"
+        android:id="@+id/ignored_user_button"
+        android:text="@string/user_settings_ignored_users_unignore_button"
+        android:singleLine="true"
+        android:layout_centerVertical="true"
+        android:layout_alignParentEnd="true"
+        style="@app:style/BlockedUsersList.Item.UnblockButton"/>
+</RelativeLayout>

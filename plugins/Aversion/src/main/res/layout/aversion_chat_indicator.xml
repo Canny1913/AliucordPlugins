@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--suppress AndroidDomInspection -->
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res/com.discord"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:gravity="center_vertical"
+    android:id="@+id/aversion_chat_indicator"
+    android:background="?app:attr/color_brand_600"
+    android:paddingTop="8dp"
+    android:paddingBottom="8dp"
+    android:visibility="gone"
+    android:paddingStart="16dp"
+    android:paddingEnd="16dp"
+    tools:ignore="ResAuto, InvalidId"
+    style="@app:style/UiKit.ViewGroup.LinearLayout.Horizontal">
+    <TextView
+        android:textSize="@app:dimen/uikit_textsize_medium"
+        android:textColor="@app:color/white"
+        android:gravity="center_vertical"
+        android:id="@+id/aversion_chat_indicator_text"
+        android:layout_width="0dp"
+        android:layout_weight="1"
+        android:lineSpacingMultiplier="1"
+        style="@app:style/UiKit.TextView.Semibold"/>
+    <ImageView
+        android:gravity="center_vertical"
+        android:id="@+id/aversion_chat_indicator_dismiss"
+        android:layout_height="wrap_content"
+        android:src="@app:drawable/ic_close_white_18dp"
+        android:scaleType="center"
+        android:contentDescription="@string/chat_status_dismiss"
+        android:paddingStart="16dp"
+        style="@app:style/UiKit.ImageView"/>
+</LinearLayout>

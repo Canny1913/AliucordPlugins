@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="ignored_reply_message">Ignored message.</string>
+    <string name="chat_status_dismiss">Dismiss blocked notice</string>
+    <string name="channel_list_indicator_description">Aversion channel list indicator</string>
+    <string name="friends_list_ignored">Ignored</string>
+    <string name="user_settings_ignored_users">Ignored Users</string>
+    <string name="user_settings_ignored_users_empty">You don\'t have any ignored users. Here is Wumpus eating caik</string>
+    <string name="user_settings_ignored_users_unignore_button">Unignore</string>
+    <string name="user_actions_ignore">Ignore</string>
+    <string name="user_actions_unignore">Unignore</string>
+    <string name="failed_to_ignore">Failed to ignore user!</string>
+    <string name="failed_to_unignore">Failed to unignore user!</string>
+</resources>

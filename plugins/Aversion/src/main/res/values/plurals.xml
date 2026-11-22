@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <plurals name="blocked_messages_count">
+        <item quantity="one">%1$d blocked message from %2$s</item>
+        <item quantity="other">%1$d blocked messages from %2$s</item>
+    </plurals>
+    <plurals name="ignored_messages_count">
+        <item quantity="one">%1$d ignored message from %2$s</item>
+        <item quantity="other">%1$d ignored messages from %2$s</item>
+    </plurals>
+    <plurals name="chat_indicator_text">
+        <item quantity="one">%1$d blocked/ignored user is currently participating in chat.</item>
+        <item quantity="other">%1$d blocked/ignored users are currently participating in chat.</item>
+    </plurals>
+</resources>

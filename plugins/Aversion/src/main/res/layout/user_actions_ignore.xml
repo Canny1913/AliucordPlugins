@@ -1,0 +1,9 @@
+<!--suppress AndroidDomInspection -->
+<TextView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res/com.discord"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:ignore="ResAuto, InvalidId"
+    android:id="@+id/user_actions_dialog_ignore_item"
+    app:drawableStartCompat="@drawable/ic_ignored"
+    style="@app:style/UiKit.ListItem.Icon"/>

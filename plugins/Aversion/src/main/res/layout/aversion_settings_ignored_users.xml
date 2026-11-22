@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--suppress AndroidDomInspection -->
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res/com.discord"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:background="?app:attr/colorBackgroundPrimary"
+    android:layout_height="match_parent"
+    tools:ignore="ResAuto, InvalidId"
+    style="@app:style/UiKit.ViewGroup.CoordinatorLayout.Page">
+    <com.google.android.material.appbar.AppBarLayout style="@app:style/AppTheme.AppBarLayout.Flat">
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/action_bar_toolbar"
+            style="@app:style/AppTheme.Toolbar"/>
+    </com.google.android.material.appbar.AppBarLayout>
+    <com.discord.app.AppViewFlipper
+        android:id="@+id/ignored_users_flipper"
+        style="@app:style/UiKit.ViewGroup.AppViewFlipper.InCoordinatorLayout">
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/ignored_users_list_recycler"
+            android:background="?app:attr/colorBackgroundPrimary"
+            android:scrollbars="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+        <LinearLayout
+            android:gravity="center"
+            android:layout_gravity="center"
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="16dp">
+            <ImageView
+                android:id="@+id/friends_list_item_empty_no_ignored"
+                android:layout_width="320dp"
+                android:layout_height="wrap_content"
+                android:src="?app:attr/theme_friends_no_block"
+                android:scaleType="fitCenter"
+                android:adjustViewBounds="true"
+                android:importantForAccessibility="no"/>
+            <TextView
+                android:textSize="@app:dimen/uikit_textsize_medium"
+                android:textColor="?app:attr/colorTextNormal"
+                android:gravity="center"
+                android:layout_width="336dp"
+                android:layout_marginTop="16dp"
+                android:text="@string/user_settings_ignored_users_empty"
+                style="@app:style/UiKit.TextView.Semibold"/>
+        </LinearLayout>
+    </com.discord.app.AppViewFlipper>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

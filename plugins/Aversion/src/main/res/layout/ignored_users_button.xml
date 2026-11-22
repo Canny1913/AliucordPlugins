@@ -1,0 +1,11 @@
+<!--suppress AndroidDomInspection -->
+<TextView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res/com.discord"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:ignore="ResAuto, InvalidId"
+    android:textColor="?app:attr/primary_100"
+    android:id="@+id/settings_ignored_users_button"
+    android:text="@string/user_settings_ignored_users"
+    app:drawableEndCompat="?app:attr/ic_navigate_next"
+    style="@app:style/UiKit.Settings.Item"/>
