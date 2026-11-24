@@ -500,21 +500,22 @@ class Aversion : Plugin() {
 
         originalBlockedEntries.forEachIndexed { groupIndex, (entryIndex, _) ->
             val originalEntry = items[entryIndex] as BlockedMessagesEntry
-            val messages = processedBlockedGroups[groupIndex]
-            val blockedAuthors = messages.map { it.author }.distinctBy { it.id }
+            val groupMsgs = processedBlockedGroups[groupIndex]
+            val blockedAuthors = groupMsgs.map { it.author }.distinctBy { it.id }
             val newEntry = AversionBlockedEntry(
-                blockedCount = messages.size,
+                blockedCount = groupMsgs.size,
                 isExpandedBlock = originalEntry.isInExpandedBlockedMessageChunk,
                 blockedAuthors = blockedAuthors,
                 adapterMessage = originalEntry.message,
                 isHidden = hideBlockedEntries
             )
             if (originalEntry.isInExpandedBlockedMessageChunk) {
-                val lastMessageId = messages.minOf { it.id }
-                val newIndex = items.indexOfLast {
+                val lastMessageId = groupMsgs.minOf { it.id }
+                var newIndex = items.indexOfLast {
                     it.messageId == lastMessageId
                 }
                 items.removeAt(entryIndex)
+                if (messages.size == 1) newIndex += 1
                 items.add(newIndex, newEntry)
             } else {
                 items[entryIndex] = newEntry
