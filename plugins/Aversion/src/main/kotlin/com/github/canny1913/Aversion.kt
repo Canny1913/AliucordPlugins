@@ -105,6 +105,7 @@ import java.lang.ref.WeakReference
 import java.lang.reflect.Field
 import java.lang.reflect.Method
 import java.util.Collections
+import java.util.TimeZone
 
 
 @AliucordPlugin
@@ -496,6 +497,7 @@ class Aversion : Plugin() {
         }
         val processedBlockedGroups = blockedGroups.filter { it.isNotEmpty() }.reversed()
         val originalBlockedEntries = items.withIndex().filter { it.value is BlockedMessagesEntry }
+
         originalBlockedEntries.forEachIndexed { groupIndex, (entryIndex, _) ->
             val originalEntry = items[entryIndex] as BlockedMessagesEntry
             val messages = processedBlockedGroups[groupIndex]
@@ -615,10 +617,14 @@ class PluginFragmentFactory : FragmentFactory() {
         return super.instantiate(Aversion::class.java.classLoader!!, p1)
     }
 }
+val timeDifference = TimeZone.getDefault().rawOffset
+
+val Long.toLocal: Long
+    get() = this + timeDifference
 
 infix fun Long.equalsDay(other: Long?): Boolean {
     if (other == null) return false
-    return (this / 86400000L) == (other / 86400000L)
+    return (this.toLocal / 86400000L) == (other.toLocal / 86400000L)
 }
 
 inline fun <reified T> PatcherAPI.afterBeforeHooks(
