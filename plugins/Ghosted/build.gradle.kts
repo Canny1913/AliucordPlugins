@@ -1,9 +1,12 @@
-version = "0.0.3"
+version = "0.0.4"
 description = "Displays a ghost icon upon ghosting DMs"
 
 aliucord {
     changelog.set(
         """
+        # 0.0.4
+        * Move all clear button to plugin settings.
+        
         # 0.0.3
         * Pretty much rewrite half of plugin.
         
