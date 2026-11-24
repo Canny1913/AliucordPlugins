@@ -95,8 +95,10 @@ class AttachmentEdit : Plugin() {
         patcher.before<ChatInputViewModel>("handleStoreState",
             ChatInputViewModel.StoreState::class.java) { (_, state: ChatInputViewModel.StoreState) ->
             val loadedState = state as? ChatInputViewModel.StoreState.Loaded ?: return@before
+            val previousViewState = viewState as? ChatInputViewModel.ViewState.Loaded ?: return@before
             val editing = loadedState.editingMessage?.message ?: return@before
-            if (!editing.attachments.isNullOrEmpty()) {
+            val isEditingNewMessage = loadedState.editingMessage != previousViewState.editingMessage
+            if (!editing.attachments.isNullOrEmpty() && isEditingNewMessage) {
                 val previousAttachments = editing.attachments.sortedBy { it.id }
                 val eventSubject = ChatInputViewModel.`access$getEventSubject$p`(this)
                 eventSubject.k.onNext(AppendAttachments(previousAttachments))
