@@ -59,10 +59,6 @@ import java.lang.ref.WeakReference
 class Ghosted : Plugin() {
     var WidgetChannelsListAdapter.ItemChannelPrivate.binding by accessField<WidgetChannelsListItemChannelPrivateBinding>()
     val WidgetChannelsListItemChannelActions.binding by accessGetter<WidgetChannelsListItemActionsBinding>()
-    val WidgetChannelsList.binding by accessGetter<WidgetChannelsListBinding>()
-    var msgCache = mutableMapOf<Long, MessageItem>()
-    var mutedDmsCache = mutableSetOf<Long>()
-    var adapterRef: WeakReference<WidgetChannelsListAdapter> = WeakReference(null)
     var me: Long = 0L
 
     init {
@@ -79,6 +75,9 @@ class Ghosted : Plugin() {
     }
 
     override fun stop(context: Context) {
+        pluginCtx = null
+        msgCache.clear()
+        mutedDmsCache.clear()
         patcher.unpatchAll()
     }
 
@@ -133,26 +132,7 @@ class Ghosted : Plugin() {
                 }
             }
         }
-        patcher.before<WidgetChannelsList>(
-            "onViewBound", View::class.java
-        ) {
-            val listHeaderView = binding.l
-            val parent = listHeaderView.parent as ConstraintLayout
-            var clearAllButton =
-                parent.findViewById<AppCompatImageView>(R.id.channel_list_clear_all_ghost)
-            if (clearAllButton == null) {
-                val idx = parent.indexOfChild(listHeaderView)
-                clearAllButton = LayoutInflater.from(pluginCtx!!).inflate(
-                    R.layout.channel_list_clear_all_ghost,
-                    parent,
-                    false
-                ) as AppCompatImageView
-                parent.addView(clearAllButton, idx)
-            }
-            clearAllButton.apply {
-                setOnClickListener { onClickClearAll(this@before) }
-            }
-        }
+
         patcher.after<WidgetChannelsListItemChannelActions>(
             "configureUI", WidgetChannelsListItemChannelActions.Model::class.java
         ) { (_, model: WidgetChannelsListItemChannelActions.Model) ->
@@ -194,19 +174,6 @@ class Ghosted : Plugin() {
         ) { (_, deleteModel: ModelMessageDelete) ->
             handleMessageDelete(deleteModel)
         }
-    }
-
-    fun onClickClearAll(fragment: Fragment) {
-        val dialog = ConfirmDialog().setTitle("Clear Ghost")
-            .setDescription("Are you sure you want to clear all current ghosts?")
-
-        dialog.setOnOkListener {
-            GhostedSettings.clearMarkerTimestamps =
-                msgCache.mapValues { it.value.timestamp }.toMutableMap()
-            Utils.showToast("Cleared all ghost markers")
-            @SuppressLint("NotifyDataSetChanged") adapterRef.get()?.notifyDataSetChanged()
-            dialog.dismiss()
-        }.show(fragment.parentFragmentManager, "Clear Ghost")
     }
 
     fun onClickClear(fragment: Fragment, id: Long) {
@@ -288,6 +255,10 @@ class Ghosted : Plugin() {
     )
 
     companion object {
+        var msgCache = mutableMapOf<Long, MessageItem>()
+        var mutedDmsCache = mutableSetOf<Long>()
+        var adapterRef: WeakReference<WidgetChannelsListAdapter> = WeakReference(null)
+
         @SuppressLint("StaticFieldLeak")
         internal var pluginCtx: PluginContext? = null
         val ghostIcon: Drawable?

@@ -1,5 +1,6 @@
 package com.github.canny1913.settings
 
+import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.os.Build
 import android.view.View
@@ -8,12 +9,15 @@ import android.widget.TextView
 import androidx.core.widget.TextViewCompat
 import com.aliucord.Utils
 import com.aliucord.api.SettingsAPI
+import com.aliucord.fragments.ConfirmDialog
 import com.aliucord.fragments.SettingsPage
 import com.aliucord.settings.SettingsDelegate
 import com.aliucord.settings.delegate
 import com.aliucord.utils.ViewUtils.addTo
+import com.aliucord.views.Button
 import com.discord.utilities.dimen.DimenUtils
 import com.discord.views.CheckedSetting
+import com.github.canny1913.Ghosted
 import com.lytefast.flexinput.R
 
 class GhostedSettings: SettingsPage() {
@@ -81,6 +85,21 @@ class GhostedSettings: SettingsPage() {
             setPadding(paddingLeft, paddingTop, DimenUtils.dpToPixels(8), paddingBottom)
 
         }.addTo(linearLayout)
+        Button(ctx).apply {
+            text = "Clear all ghost markers"
+            setOnClickListener {
+                val dialog = ConfirmDialog().setTitle("Clear Ghost")
+                    .setDescription("Are you sure you want to clear all current ghosts?")
+
+                dialog.setOnOkListener {
+                    clearMarkerTimestamps = Ghosted.msgCache.mapValues { it.value.timestamp }.toMutableMap()
+                    Utils.showToast("Cleared all ghost markers")
+                    @SuppressLint("NotifyDataSetChanged") Ghosted.adapterRef.get()?.notifyDataSetChanged()
+                    dialog.dismiss()
+                }.show(parentFragmentManager, "Clear Ghost")
+            }
+            addTo(linearLayout)
+        }
     }
 
     private fun createSetting(
