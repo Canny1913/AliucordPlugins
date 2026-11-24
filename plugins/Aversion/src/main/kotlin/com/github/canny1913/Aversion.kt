@@ -41,19 +41,17 @@ import com.aliucord.patcher.before
 import com.aliucord.patcher.component1
 import com.aliucord.patcher.component2
 import com.aliucord.patcher.component3
-import com.aliucord.patcher.component4
-import com.aliucord.patcher.component5
 import com.aliucord.utils.ChannelUtils
 import com.aliucord.utils.RxUtils.map
 import com.aliucord.utils.ViewUtils.addTo
 import com.aliucord.utils.ViewUtils.findViewById
 import com.aliucord.utils.accessField
-import com.aliucord.wrappers.ChannelWrapper.Companion.recipients
 import com.discord.api.channel.Channel
 import com.discord.app.AppActivity
 import com.discord.databinding.WidgetChannelsListItemChannelPrivateBinding
 import com.discord.databinding.WidgetFriendsListAdapterItemFriendBinding
 import com.discord.models.message.Message
+import com.discord.stores.StoreChat
 import com.discord.stores.StoreStream
 import com.discord.utilities.color.ColorCompat
 import com.discord.utilities.embed.InviteEmbedModel
@@ -78,7 +76,6 @@ import com.discord.widgets.chat.list.entries.SpotifyListenTogetherEntry
 import com.discord.widgets.chat.list.entries.StickerEntry
 import com.discord.widgets.chat.list.entries.ThreadEmbedEntry
 import com.discord.widgets.chat.list.entries.ThreadStarterDividerEntry
-import com.discord.widgets.chat.list.entries.UploadProgressEntry
 import com.discord.widgets.chat.list.model.WidgetChatListModel
 import com.discord.widgets.chat.list.model.WidgetChatListModelMessages
 import com.discord.widgets.chat.list.model.`WidgetChatListModelMessages$Companion$get$1`
@@ -127,6 +124,7 @@ class Aversion : Plugin() {
 
     val activeColorId = Utils.getResId("colorInteractiveActive", "attr")
     val mutedColorId = Utils.getResId("colorInteractiveMuted", "attr")
+    val normalColorId = Utils.getResId("colorInteractiveNormal", "attr")
 
     init {
         settingsTab = SettingsTab(
@@ -159,6 +157,17 @@ class Aversion : Plugin() {
         } catch (e: Exception) {
             logger.error(IllegalStateException("Activity is uninitialized!", e))
         }
+        patcher.after<WidgetChannelsListAdapter>(
+            RecyclerView::class.java,
+            FragmentManager::class.java,
+        ) {
+            channelListAdapterRef = WeakReference(this)
+        }
+        patcher.after<WidgetFriendsListAdapter>(
+            RecyclerView::class.java
+        ) {
+            friendListAdapterRef = WeakReference(this)
+        }
     }
 
     fun patchChatModels() {
@@ -182,13 +191,10 @@ class Aversion : Plugin() {
         ) { (
                 param,
                 messagesWithMetadata: WidgetChatListModelMessages.MessagesWithMetadata,
-                _: Channel,
-                blockedUsersMap: Map<Long, Int>,
-                blockedExpanded: List<Long>,
             ) ->
             val result = param.result as? WidgetChatListModelMessages ?: return@after
                 processChatEntries(
-                    messagesWithMetadata.messages, result.items, blockedUsersMap, blockedExpanded
+                    messagesWithMetadata.messages, result.items
                 )
         }
         patcher.before<WidgetChatListAdapter>(
@@ -210,9 +216,10 @@ class Aversion : Plugin() {
             "onConfigure", Int::class.java, ChatListEntry::class.java
         ) { param ->
             val data = param.args[1] as? ChatListEntry ?: return@after
-            if (data is UploadProgressEntry || adapter.data !is WidgetChatListModel) return@after
-            if (data.authorId in StoreIgnoredUsers.ignoredIds) itemView.background = backgroundBlockedExpanded
+            if (adapter.data !is WidgetChatListModel) return@after
+            if (data.messageId in expandedIds) itemView.background = backgroundBlockedExpanded
         }
+        @SuppressLint("UseKtx")
         patcher.after<WidgetChatListItem>(
             Int::class.java, WidgetChatListAdapter::class.java
         ) {
@@ -264,7 +271,7 @@ class Aversion : Plugin() {
             channelListAdapterRef.get()?.run {
                 if (selectedGuildId != 0L) return@loggerSubscribe
                 val idx = internalData.indexOfFirst { item ->
-                    item is ChannelListItemPrivate && item.channel.recipients?.singleOrNull()?.id == event.id
+                    item is ChannelListItemPrivate && ChannelUtils.getDMRecipient(item.channel)?.id == (event.userId ?: event.id)
                 }
                 // we need to provide payload else view layout gets postponed
                 recycler.post { notifyItemChanged(idx, Any()) }
@@ -276,18 +283,6 @@ class Aversion : Plugin() {
                 // we need to provide payload else view layout gets postponed
                 recycler.post { notifyItemChanged(idx, Any()) }
             }
-        }
-        // register observable for listening to relationship changes
-        patcher.after<WidgetChannelsListAdapter>(
-            RecyclerView::class.java,
-            FragmentManager::class.java,
-        ) {
-            channelListAdapterRef = WeakReference(this)
-        }
-        patcher.after<WidgetFriendsListAdapter>(
-            RecyclerView::class.java
-        ) {
-            friendListAdapterRef = WeakReference(this)
         }
         // Add indicators to DM list
         patcher.after<WidgetChannelsListAdapter.ItemChannelPrivate>(
@@ -313,42 +308,48 @@ class Aversion : Plugin() {
             val image = if (isBlocked) blockedDrawable else ignoredDrawable
             indicatorView.setImageDrawable(image)
 
-            val color = if (item.selected) {
+            val textColor = if (item.selected) {
                 ColorCompat.getThemedColor(binding.f, activeColorId)
             } else {
                 ColorCompat.getThemedColor(binding.f, mutedColorId)
             }
-            binding.f.setTextColor(color)
-            indicatorView.imageTintList = ColorStateList.valueOf(color)
+            binding.f.setTextColor(textColor)
+            val iconColor = if (item.selected) { textColor } else {
+                ColorCompat.getThemedColor(binding.f, normalColorId)
+            }
+            indicatorView.imageTintList = ColorStateList.valueOf(iconColor)
         }
     }
     fun patchStores() {
         GatewayAPI.onEvent<PartialReadyEvent>("READY") {
             dispatch {
-                StoreIgnoredUsers.handleConnectionOpen(
+                StoreIgnoredUsers.handleReady(
                     it
                 )
             }
         }
         GatewayAPI.onEvent<UserRelationshipEvent>("RELATIONSHIP_ADD") {
             dispatch {
-                StoreIgnoredUsers.handleRelationshipUpdate(
+                StoreIgnoredUsers.handleUpdate(
                     it
                 )
+                if (it.type == RELATIONSHIP_BLOCKED || it.userIgnored) clearExpandedIds()
             }
         }
-        GatewayAPI.onEvent<UserRelationshipEvent>("RELATIONSHIP_UPDATE") { event ->
+        GatewayAPI.onEvent<UserRelationshipEvent>("RELATIONSHIP_UPDATE") {
             dispatch {
-                StoreIgnoredUsers.handleRelationshipUpdate(
-                    event
+                StoreIgnoredUsers.handleUpdate(
+                    it
                 )
+                if (it.type == RELATIONSHIP_BLOCKED || it.userIgnored) clearExpandedIds()
             }
         }
         GatewayAPI.onEvent<UserRelationshipEvent>("RELATIONSHIP_REMOVE") {
             dispatch {
-                StoreIgnoredUsers.handleRelationshipUpdate(
+                StoreIgnoredUsers.handleUpdate(
                     it
                 )
+                if (it.type == RELATIONSHIP_BLOCKED || it.userIgnored) clearExpandedIds()
             }
         }
         val storeStream = StoreStream.Companion!!
@@ -361,6 +362,9 @@ class Aversion : Plugin() {
                 blockedUsers.clear()
                 blockedUsers.addAll(it)
             }
+        storeStream.channelsSelected.observeId().r().withComputation().loggerSubscribe {
+            dispatch { clearExpandedIds() }
+        }
     }
 
     fun patchFriendsList() {
@@ -394,23 +398,25 @@ class Aversion : Plugin() {
             val dialog = receiver as a
             val binding = dialog.g()
             val user = viewModel.a
+            var ignoreButton = binding.root.findViewById<TextView>(R.id.user_actions_dialog_ignore_item)
+            if (ignoreButton == null) {
+                ignoreButton = LayoutInflater.from(pluginCtx!!).inflate(R.layout.user_actions_ignore, binding.a, false).addTo(binding.a) as TextView
+            }
             val isIgnored = user.id in StoreIgnoredUsers.ignoredIds
-            val textView = LayoutInflater.from(pluginCtx!!).inflate(R.layout.user_actions_ignore, binding.a, false) as TextView
-            textView.addTo(binding.a)
             val textId = if (isIgnored) R.string.user_actions_unignore else R.string.user_actions_ignore
-            textView.text = pluginCtx!!.getString(textId)
-            textView.setOnClickListener {
+            ignoreButton.text = pluginCtx!!.getString(textId)
+            ignoreButton.setOnClickListener {
                 if (isIgnored) {
                     sendIgnoreRequest(user.id, "DELETE", USER_ACTIONS_UNIGNORE_LOCATION) {
                         val err = it ?: return@sendIgnoreRequest dialog.dismiss()
                         logger.error("Failed to unignore", err)
-                        logger.errorToast(textView.context.getString(R.string.failed_to_unignore), err)
+                        logger.errorToast(pluginCtx!!.getString(R.string.failed_to_unignore), err)
                     }
                 } else {
                     sendIgnoreRequest(user.id, "PUT", USER_ACTIONS_IGNORE_LOCATION) {
                         val err = it ?: return@sendIgnoreRequest dialog.dismiss()
                         logger.error("Failed to ignore", err)
-                        logger.errorToast(textView.context.getString(R.string.failed_to_ignore), err)
+                        logger.errorToast(pluginCtx!!.getString(R.string.failed_to_ignore), err)
                     }
                 }
             }
@@ -436,8 +442,6 @@ class Aversion : Plugin() {
     fun processChatEntries(
         messages: List<Message>,
         items: MutableList<ChatListEntry>,
-        blockedUsersMap: Map<Long, Int>,
-        blockedExpanded: List<Long>
     ) {
         val hideBlockedEntries = AversionSettings.hideBlockedMessages
         val hideIgnoredEntries = AversionSettings.hideIgnoredMessages
@@ -446,7 +450,7 @@ class Aversion : Plugin() {
         val ignoreGroups = mutableListOf<Pair<Int, Int>>()
         var ignoreGroupStart = -1
         messages.forEachIndexed { index, currentMsg ->
-            if (currentMsg.author.id in blockedUsersMap) {
+            if (currentMsg.author.id in blockedUsers) {
                 val lastGroup = blockedGroups.last()
                 val lastGroupMessage = lastGroup.lastOrNull()
                 val lastGroupMessageTimestamp = lastGroupMessage?.timestamp?.g()
@@ -481,7 +485,7 @@ class Aversion : Plugin() {
             val lastItem = items.indexOfLast { it.messageId == msgSubList.first().id }
             val itemSubList = items.subList(firstItem, lastItem + 1)
             val ignoredSize = msgSubList.size
-            val isExpanded = msgSubList.first().id in blockedExpanded
+            val isExpanded = msgSubList.first().id in expandedIds
             if (!isExpanded) {
                 itemSubList.clear()
             }
@@ -490,7 +494,7 @@ class Aversion : Plugin() {
                     ignoredCount = ignoredSize,
                     isExpandedIgnoreBlock = isExpanded,
                     ignoredAuthors = ignoredAuthors,
-                    adapterMessage = msgSubList.first(),
+                    messages = msgSubList.map { it.id }.toSet(),
                     isHidden = hideIgnoredEntries
                 )
             )
@@ -499,18 +503,17 @@ class Aversion : Plugin() {
         val originalBlockedEntries = items.withIndex().filter { it.value is BlockedMessagesEntry }
 
         originalBlockedEntries.forEachIndexed { groupIndex, (entryIndex, _) ->
-            val originalEntry = items[entryIndex] as BlockedMessagesEntry
-            val groupMsgs = processedBlockedGroups[groupIndex]
-            val blockedAuthors = groupMsgs.map { it.author }.distinctBy { it.id }
+            val msgChunk = processedBlockedGroups[groupIndex]
+            val blockedAuthors = msgChunk.map { it.author }.distinctBy { it.id }
             val newEntry = AversionBlockedEntry(
-                blockedCount = groupMsgs.size,
-                isExpandedBlock = originalEntry.isInExpandedBlockedMessageChunk,
+                blockedCount = msgChunk.size,
+                isExpandedBlock = msgChunk.first().id in expandedIds,
                 blockedAuthors = blockedAuthors,
-                adapterMessage = originalEntry.message,
+                messages = msgChunk.map { it.id }.toSet(),
                 isHidden = hideBlockedEntries
             )
-            if (originalEntry.isInExpandedBlockedMessageChunk) {
-                val lastMessageId = groupMsgs.minOf { it.id }
+            if (newEntry.isExpandedBlock) {
+                val lastMessageId = msgChunk.minOf { it.id }
                 var newIndex = items.indexOfLast {
                     it.messageId == lastMessageId
                 }
@@ -521,8 +524,6 @@ class Aversion : Plugin() {
                 items[entryIndex] = newEntry
             }
         }
-
-
     }
 
     val ChatListEntry.messageId: Long?
@@ -545,35 +546,31 @@ class Aversion : Plugin() {
             }
         }
 
-    val ChatListEntry.authorId: Long?
-        get() {
-            return when (this) {
-                is MessageEntry -> this.message.author.id
-                is AttachmentEntry -> this.message.author.id
-                is EmbedEntry -> this.message.author.id
-                is StickerEntry -> this.message.author.id
-                is BotUiComponentEntry -> this.message.author.id
-                is ReactionsEntry -> this.message.author.id
-                is GameInviteEntry -> this.authorId
-                is SpotifyListenTogetherEntry -> this.userId
-                is InviteEntry -> this.userId
-                is GuildTemplateEntry -> this.userId
-                is GiftEntry -> this.userId
-                is ThreadEmbedEntry -> this.parentMessage.author.id
-                else -> null
-            }
-        }
-
     override fun stop(context: Context) {
         pluginCtx = null
         patcher.unpatchAll()
     }
 
     companion object {
+        const val USER_ACTIONS_IGNORE_LOCATION: String = "ignore confirmation action sheet"
+        const val USER_ACTIONS_UNIGNORE_LOCATION: String = "user profile overflow menu"
+        const val SETTINGS_UNIGNORE_LOCATION: String = "ignored-users-list-mobile"
+
+        const val RELATIONSHIP_BLOCKED: Int = 2
+
         @SuppressLint("StaticFieldLeak")
         internal var pluginCtx: PluginContext? = null
 
         internal var blockedUsers: MutableSet<Long> = Collections.synchronizedSet(hashSetOf<Long>())
+
+        internal var expandedIds: MutableSet<Long> = Collections.synchronizedSet(hashSetOf<Long>())
+        fun clearExpandedIds() {
+            expandedIds.clear()
+            val storeChat = StoreStream.Companion!!.chat
+            StoreChat.`access$getExpandedBlockedMessageGroups$p`(storeChat).clear()
+            storeChat.markChanged()
+        }
+
         val blockedColor = ColorCompat.getColor(
             Utils.appContext, Utils.getResId("primary_dark_630", "color")
         )
@@ -593,9 +590,6 @@ class Aversion : Plugin() {
 
         fun createLocationJson(location: String): String =
             JSONObject().apply { put("location", location) }.toString().toByteArray(Charsets.UTF_8).let { Base64.encodeToString(it, Base64.NO_WRAP) }
-        const val USER_ACTIONS_IGNORE_LOCATION: String = "ignore confirmation action sheet"
-        const val USER_ACTIONS_UNIGNORE_LOCATION: String = "user profile overflow menu"
-        const val SETTINGS_UNIGNORE_LOCATION: String = "ignored-users-list-mobile"
 
         fun sendIgnoreRequest(userId: Long, method: String, location: String, callback: (Throwable?) -> Unit) {
             Utils.threadPool.execute {

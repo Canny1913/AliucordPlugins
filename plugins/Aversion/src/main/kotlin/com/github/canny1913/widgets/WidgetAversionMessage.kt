@@ -16,6 +16,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.aliucord.Utils
 import com.aliucord.utils.ReflectUtils
 import com.aliucord.wrappers.users.globalName
+import com.discord.stores.StoreStream
 import com.discord.widgets.chat.list.adapter.WidgetChatListAdapter
 import com.discord.widgets.chat.list.adapter.WidgetChatListItem
 import com.discord.widgets.chat.list.entries.ChatListEntry
@@ -104,7 +105,13 @@ class WidgetAversionMessage(adapter: WidgetChatListAdapter) :
         }
         binding.iconView.setImageResource(drawableId)
         binding.rootView.setOnClickListener {
-            adapter.eventHandler.onMessageBlockedGroupClicked(data.message)
+            if (data.isExpanded) {
+                Aversion.expandedIds.removeAll(data.messageIds)
+            } else {
+                Aversion.expandedIds.addAll(data.messageIds)
+            }
+            // Still toggle in normal store so chat refreshes
+            StoreStream.getChat().toggleBlockedMessageGroup(data.messageIds.first())
         }
     }
 }

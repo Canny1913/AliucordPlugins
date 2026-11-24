@@ -1,20 +1,19 @@
 package com.github.canny1913.entries
 
 import com.discord.api.user.User
-import com.discord.models.message.Message
 
 data class AversionBlockedEntry(
     val blockedCount: Int,
     val isExpandedBlock: Boolean,
     val blockedAuthors: List<User>,
-    val adapterMessage: Message,
+    val messages: Set<Long>,
     val isHidden: Boolean
 ): AversionEntry(
     aversionCount = blockedCount,
-    isExpanded = isExpandedBlock,
     authors = blockedAuthors,
-    message = adapterMessage,
-    key = adapterMessage.id.toString(),
+    isExpanded = isExpandedBlock,
+    messageIds = messages,
+    key = messages.firstOrNull().toString(),
     type = TYPE,
     hidden = isHidden
 ) {

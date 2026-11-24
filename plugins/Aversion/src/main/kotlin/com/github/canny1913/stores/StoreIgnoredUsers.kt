@@ -35,7 +35,7 @@ object StoreIgnoredUsers {
         subject.k.onNext(data)
     }
 
-    fun handleConnectionOpen(payload: PartialReadyEvent) {
+    fun handleReady(payload: PartialReadyEvent) {
         val relationships = payload.relationships
         val hashSet = relationships.filter { it.userIgnored && it.type != 2 }.map { it.userId ?: it.id }.toHashSet()
         ignoredIdsSnapshot.clear()
@@ -48,7 +48,7 @@ object StoreIgnoredUsers {
         subject.onNext(ignoredIdsSnapshot)
     }
 
-    fun handleRelationshipUpdate(relationship: UserRelationshipEvent) {
+    fun handleUpdate(relationship: UserRelationshipEvent) {
         val set = ignoredIdsSnapshot
         if (relationship.type == 2) {
             set.remove(relationship.id)
