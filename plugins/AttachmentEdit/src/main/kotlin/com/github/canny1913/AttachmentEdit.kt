@@ -13,7 +13,6 @@ import com.aliucord.Http
 import com.aliucord.Utils
 import com.aliucord.annotations.AliucordPlugin
 import com.aliucord.entities.Plugin
-import com.aliucord.entities.RNMessage
 import com.aliucord.patcher.before
 import com.aliucord.patcher.component1
 import com.aliucord.patcher.component2
@@ -75,17 +74,7 @@ class AttachmentEdit : Plugin() {
             class File(val upload_url: String, val upload_filename: String)
         }
 
-        class MessagePayload(
-            content: String,
-            nonce: String,
-            val channelId: String,
-            val type: Int,
-            val messageReference: RestAPIParams.Message.MessageReference?,
-            val allowedMentions: RestAPIParams.Message.AllowedMentions?,
-            val attachments: List<Attachment>,
-        ) : RNMessage(content = content, nonce = nonce) {
-            class Attachment(val id: String, val filename: String, val uploadedFilename: String)
-        }
+        class AttachmentPayload(val id: String, val filename: String?, val uploadedFilename: String?, val isSpoiler: Boolean)
 
         class PartialMessagePayload(
             @SerializedName("content") val content: String? = null,
@@ -94,7 +83,7 @@ class AttachmentEdit : Plugin() {
             val type: Int? = null,
             val messageReference: RestAPIParams.Message.MessageReference? = null,
             val allowedMentions: RestAPIParams.Message.AllowedMentions? = null,
-            @SerializedName("attachments") val attachments: List<Any>? = null,
+            @SerializedName("attachments") val attachments: List<AttachmentPayload>? = null,
         )
 
         class AppendAttachments(val attachments: List<MessageAttachment>) : ChatInputViewModel.Event(null)
@@ -179,8 +168,9 @@ class AttachmentEdit : Plugin() {
 
             val channelId = `$viewState`.channelId
             val messageId = `$viewState`.editingMessage.message.id
-            val oldRawAttachments = oldAttachments.map {
-                (it as Attachment<MessageAttachment>).data
+            val oldRawAttachments = oldAttachments.map { att ->
+                val data = (att as Attachment<MessageAttachment>).data
+                AttachmentPayload(data.id.toString(), null, null, att.spoiler)
             }.sortedBy { it.id }
 
             var id = oldAttachments.lastOrNull()?.id ?: 0
@@ -211,13 +201,13 @@ class AttachmentEdit : Plugin() {
                         // local message type
                         typeField = -1
                         // to remove old attachments from ui if unselected
-                        attachmentsField = attachments.intersect(oldRawAttachments.toSet()).toList()
+                        attachmentsField = attachments.filter { it.id in oldAttachments.map { old -> old.id } }
                     }
                     storeStream.messages.holder.addMessages(listOf(newLocalMessage))
                 }
 
                 // upload all attachments and collect raw attachment payloads
-                val newRawAttachments = mutableListOf<MessagePayload.Attachment>()
+                val newRawAttachments = mutableListOf<AttachmentPayload>()
                 newAttachments.forEachIndexed { index, attachment ->
                     val upload = fileUploads[index]
                     val rawAttachment = uploadAttachment(context.contentResolver,
@@ -225,6 +215,7 @@ class AttachmentEdit : Plugin() {
                         attachment.displayName,
                         upload.contentLength,
                         attachment.uri,
+                        attachment.spoiler,
                         channelId,
                         upload.mimeType,
                         upload.bytesWrittenObservable)
@@ -253,10 +244,11 @@ class AttachmentEdit : Plugin() {
         name: String,
         contentLength: Long,
         uri: Uri,
+        spoiler: Boolean,
         channelId: Long,
         mimeType: String,
         progressObserver: Observable<Long>? = null
-    ): MessagePayload.Attachment {
+    ): AttachmentPayload {
         val inputStream = contentResolver.openInputStream(uri) ?: throw Exception("Failed to open file")
         inputStream.use { inputStream ->
             val initReq = Http.Request.newDiscordRNRequest("/channels/$channelId/attachments", "POST")
@@ -290,7 +282,7 @@ class AttachmentEdit : Plugin() {
                 }
             }
 
-            return MessagePayload.Attachment(id.toString(), name, initRes.upload_filename)
+            return AttachmentPayload(id.toString(), name, initRes.upload_filename, spoiler)
         }
     }
 
